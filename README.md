@@ -1,4 +1,6 @@
-# Markdown to Styled PDF Converter
+# Styled PDFs from your Markdown
+
+![Markdown to PDF](docs/poster.png)
 
 A simple drag-and-drop tool that converts markdown files to professionally styled PDFs. Built with Bun and compiles to a single standalone executable. Opens in a native desktop window — no browser needed.
 
