@@ -1,6 +1,7 @@
 node_modules/
 dist/
 markdown-to-pdf
+*.app
 *.pdf
 *.js.map
 bun.lockb

@@ -1,7 +1,9 @@
+export {};
+
 const headless = process.argv.includes("--headless");
 
 // Spawn the HTTP server in a worker thread (webview must run on the main thread)
-const worker = new Worker(new URL("./server-worker.ts", import.meta.url).href);
+const worker = new Worker("./server-worker.ts");
 
 // Wait for the server to report it is ready
 const serverReady = new Promise<number>((resolve, reject) => {
