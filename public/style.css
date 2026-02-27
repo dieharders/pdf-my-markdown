@@ -221,10 +221,12 @@ h1 {
 .btn--secondary:hover { opacity: 0.85; }
 
 .btn--download {
-  display: inline-block;
+  display: block;
+  width: 100%;
   background: #34c759;
   color: #fff;
   text-decoration: none;
+  text-align: center;
   padding: 0.65rem 2rem;
   border-radius: 8px;
   font-weight: 600;
