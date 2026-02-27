@@ -211,7 +211,7 @@ ul > li.task-list-item input[type="checkbox"] {
 code {
   font-family: 'SF Mono', 'Fira Code', 'Menlo', 'Monaco', 'Consolas', monospace;
   font-size: 0.88em;
-  background: var(--pdf-code-bg);
+  background: var(--color-primary-lighter);
   padding: 0.15em 0.35em;
   border-radius: 3px;
   color: var(--color-primary-dark);
