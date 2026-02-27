@@ -125,6 +125,17 @@ h1 {
   flex-shrink: 0;
 }
 
+.file-list__badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #86868b;
+  background: #f0f0f3;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+}
+
 .file-list__remove:hover { color: #e33; }
 
 /* ---- Buttons ---- */

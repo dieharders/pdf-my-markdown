@@ -9,7 +9,7 @@
 <body>
   <main class="container">
     <h1>Markdown <span class="accent">to PDF</span></h1>
-    <p class="subtitle">Drop your .md files, get a styled PDF</p>
+    <p class="subtitle">Drop your .md files and any referenced images, get a styled PDF</p>
 
     <div class="color-row">
       <label for="colorInput">Theme color</label>
@@ -18,9 +18,9 @@
 
     <div id="dropZone" class="drop-zone">
       <div class="drop-zone__icon">&#128196;</div>
-      <p class="drop-zone__text">Drag &amp; drop .md files here</p>
-      <p class="drop-zone__hint">or click to browse</p>
-      <input type="file" id="fileInput" accept=".md" multiple hidden>
+      <p class="drop-zone__text">Drag &amp; drop files here</p>
+      <p class="drop-zone__hint">or click to browse &middot; include .md files and any images they reference</p>
+      <input type="file" id="fileInput" accept=".md,.png,.jpg,.jpeg,.gif,.svg,.webp,.bmp,.ico" multiple hidden>
     </div>
 
     <ul id="fileList" class="file-list"></ul>

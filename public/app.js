@@ -15,6 +15,33 @@ const closePreview = document.getElementById("closePreview");
 
 let files = [];
 
+const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".bmp", ".ico"];
+
+function isImageFile(name) {
+  return IMAGE_EXTENSIONS.some((ext) => name.toLowerCase().endsWith(ext));
+}
+
+function isMdFile(name) {
+  return name.toLowerCase().endsWith(".md");
+}
+
+function isAcceptedFile(name) {
+  return isMdFile(name) || isImageFile(name);
+}
+
+function hasMdFiles() {
+  return files.some((f) => isMdFile(f.name));
+}
+
+function buildFormData() {
+  const formData = new FormData();
+  files.forEach((f) => {
+    formData.append(isMdFile(f.name) ? "files" : "assets", f);
+  });
+  formData.append("primaryColor", colorInput.value);
+  return formData;
+}
+
 // ---- Theme Color ----
 
 function updateAccentColor(hex) {
@@ -41,7 +68,7 @@ dropZone.addEventListener("drop", (e) => {
   e.preventDefault();
   dropZone.classList.remove("drop-zone--active");
   const droppedFiles = Array.from(e.dataTransfer.files).filter((f) =>
-    f.name.toLowerCase().endsWith(".md")
+    isAcceptedFile(f.name)
   );
   addFiles(droppedFiles);
 });
@@ -78,8 +105,9 @@ function renderFileList() {
   files.forEach((f, i) => {
     const li = document.createElement("li");
     li.className = "file-list__item";
+    const label = isImageFile(f.name) ? '<span class="file-list__badge">image</span> ' : "";
     li.innerHTML = `
-      <span class="file-list__name">${escapeHtml(f.name)}</span>
+      <span class="file-list__name">${label}${escapeHtml(f.name)}</span>
       <button class="file-list__remove" data-index="${i}">&times;</button>
     `;
     fileList.appendChild(li);
@@ -89,8 +117,9 @@ function renderFileList() {
     btn.addEventListener("click", () => removeFile(Number(btn.dataset.index)));
   });
 
-  previewBtn.disabled = files.length === 0;
-  convertBtn.disabled = files.length === 0;
+  const hasMd = hasMdFiles();
+  previewBtn.disabled = !hasMd;
+  convertBtn.disabled = !hasMd;
   clearBtn.hidden = files.length === 0;
   result.hidden = true;
   errorMsg.hidden = true;
@@ -99,14 +128,12 @@ function renderFileList() {
 // ---- Preview ----
 
 previewBtn.addEventListener("click", async () => {
-  if (files.length === 0) return;
+  if (!hasMdFiles()) return;
 
   previewBtn.disabled = true;
   errorMsg.hidden = true;
 
-  const formData = new FormData();
-  files.forEach((f) => formData.append("files", f));
-  formData.append("primaryColor", colorInput.value);
+  const formData = buildFormData();
 
   try {
     const response = await fetch("/preview", {
@@ -126,7 +153,7 @@ previewBtn.addEventListener("click", async () => {
     errorMsg.textContent = err.message;
     errorMsg.hidden = false;
   } finally {
-    previewBtn.disabled = files.length === 0;
+    previewBtn.disabled = !hasMdFiles();
   }
 });
 
@@ -138,16 +165,14 @@ closePreview.addEventListener("click", () => {
 // ---- Conversion ----
 
 convertBtn.addEventListener("click", async () => {
-  if (files.length === 0) return;
+  if (!hasMdFiles()) return;
 
   status.hidden = false;
   result.hidden = true;
   errorMsg.hidden = true;
   convertBtn.disabled = true;
 
-  const formData = new FormData();
-  files.forEach((f) => formData.append("files", f));
-  formData.append("primaryColor", colorInput.value);
+  const formData = buildFormData();
 
   try {
     const response = await fetch("/convert", {
@@ -169,14 +194,15 @@ convertBtn.addEventListener("click", async () => {
     }
 
     downloadLink.href = url;
-    downloadLink.download = files[0].name.replace(/\.md$/i, "") + ".pdf";
+    const firstMd = files.find((f) => isMdFile(f.name));
+    downloadLink.download = (firstMd ? firstMd.name.replace(/\.md$/i, "") : "document") + ".pdf";
     result.hidden = false;
   } catch (err) {
     errorMsg.textContent = err.message;
     errorMsg.hidden = false;
   } finally {
     status.hidden = true;
-    convertBtn.disabled = files.length === 0;
+    convertBtn.disabled = !hasMdFiles();
   }
 });
 

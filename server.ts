@@ -1,4 +1,5 @@
 import MarkdownIt from "markdown-it";
+import markdownItAnchor from "markdown-it-anchor";
 import markdownItFootnote from "markdown-it-footnote";
 import { generatePdf } from "./pdf";
 
@@ -18,6 +19,16 @@ const md = new MarkdownIt({
   breaks: false,
 });
 
+md.use(markdownItAnchor, {
+  slugify: (s: string) =>
+    String(s)
+      .trim()
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, "")  // strip punctuation (periods, colons, etc.)
+      .replace(/\s+/g, "-")       // spaces → hyphens
+      .replace(/-+/g, "-")        // collapse consecutive hyphens
+      .replace(/^-|-$/g, ""),     // trim leading/trailing hyphens
+});
 md.use(markdownItFootnote);
 
 // ---- Custom Video Link Renderer ----
@@ -50,7 +61,8 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
   const hrefIndex = tokens[idx].attrIndex("href");
   const href = hrefIndex >= 0 ? tokens[idx].attrs![hrefIndex][1] : "";
 
-  if (isVideoUrl(href)) {
+  const nextToken = tokens[idx + 1];
+  if (isVideoUrl(href) && nextToken?.type !== "image") {
     env.__isVideoLink = true;
     return `<a href="${md.utils.escapeHtml(href)}" class="video-card" target="_blank" rel="noopener">
       <span class="video-card__icon">&#9654;</span>
@@ -59,7 +71,10 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
         <span class="video-card__title">`;
   }
 
-  tokens[idx].attrSet("target", "_blank");
+  // Don't add target="_blank" to internal anchor links — it breaks them in PDFs
+  if (!href.startsWith("#")) {
+    tokens[idx].attrSet("target", "_blank");
+  }
   return defaultLinkOpen(tokens, idx, options, env, self);
 };
 
@@ -129,7 +144,7 @@ function convertVideoTags(html: string): string {
     const filename = src.split("/").pop() || "Video";
 
     const thumbnailHtml = poster
-      ? `<img src="${md.utils.escapeHtml(poster)}" class="video-card__poster" alt="Video thumbnail">`
+      ? `<img src="${md.utils.escapeHtml(poster)}" class="video-card__poster" alt="Video thumbnail" onerror="this.outerHTML='<span class=&quot;video-card__icon&quot;>&#9654;</span>'">`
       : `<span class="video-card__icon">&#9654;</span>`;
 
     return `<a href="${escapedSrc}" class="video-card" target="_blank" rel="noopener">
@@ -168,12 +183,37 @@ function buildHtmlDocument(bodyHtml: string, title = "Document", primaryColor = 
 </html>`;
 }
 
+// ---- Asset Embedding ----
+
+const IMAGE_ASSET_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".bmp", ".ico"];
+
+async function buildAssetMap(assets: File[]): Promise<Map<string, string>> {
+  const map = new Map<string, string>();
+  for (const file of assets) {
+    const buffer = await file.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString("base64");
+    const mime = file.type || "application/octet-stream";
+    map.set(file.name, `data:${mime};base64,${base64}`);
+  }
+  return map;
+}
+
+function embedAssets(html: string, assetMap: Map<string, string>): string {
+  for (const [filename, dataUri] of assetMap) {
+    const escaped = filename.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re = new RegExp(`(src|poster)="([^"]*?${escaped})"`, "g");
+    html = html.replace(re, `$1="${dataUri}"`);
+  }
+  return html;
+}
+
 // ---- Shared Form Parsing ----
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB per file
 
 async function buildHtmlFromForm(formData: FormData): Promise<{ html: string; title: string }> {
   const files = formData.getAll("files") as File[];
+  const assets = formData.getAll("assets") as File[];
   const primaryColor = (formData.get("primaryColor") as string) || "#2563eb";
 
   if (!files || files.length === 0) {
@@ -189,6 +229,18 @@ async function buildHtmlFromForm(formData: FormData): Promise<{ html: string; ti
     }
   }
 
+  for (const file of assets) {
+    const ext = file.name.toLowerCase().slice(file.name.lastIndexOf("."));
+    if (!IMAGE_ASSET_EXTENSIONS.includes(ext)) {
+      throw Object.assign(new Error(`Asset "${file.name}" is not a supported image type`), { status: 400 });
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      throw Object.assign(new Error(`Asset "${file.name}" exceeds 10MB limit`), { status: 400 });
+    }
+  }
+
+  const assetMap = await buildAssetMap(assets);
+
   const markdownParts: string[] = [];
   for (const file of files) {
     markdownParts.push(await file.text());
@@ -198,7 +250,11 @@ async function buildHtmlFromForm(formData: FormData): Promise<{ html: string; ti
   const env: Record<string, unknown> = {};
   const htmlBody = convertVideoTags(md.render(combinedMarkdown, env));
   const title = files[0].name.replace(/\.md$/i, "");
-  const html = buildHtmlDocument(htmlBody, title, primaryColor);
+  let html = buildHtmlDocument(htmlBody, title, primaryColor);
+
+  if (assetMap.size > 0) {
+    html = embedAssets(html, assetMap);
+  }
 
   return { html, title };
 }
@@ -228,7 +284,7 @@ async function handleConvert(req: Request): Promise<Response> {
     const pdfBuffer = await generatePdf(html);
 
     const filename = `${title}.pdf`;
-    return new Response(pdfBuffer, {
+    return new Response(new Uint8Array(pdfBuffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${encodeURIComponent(filename)}"`,
@@ -251,7 +307,7 @@ const MIME_TYPES: Record<string, string> = {
   ".js": "application/javascript; charset=utf-8",
 };
 
-const staticFiles: Record<string, { path: string; contentType: string }> = {
+const staticFiles = {
   "/": { path: indexHtmlPath, contentType: MIME_TYPES[".html"] },
   "/index.html": { path: indexHtmlPath, contentType: MIME_TYPES[".html"] },
   "/style.css": { path: styleCssPath, contentType: MIME_TYPES[".css"] },
@@ -274,10 +330,10 @@ const server = Bun.serve({
   },
   async fetch(req) {
     const url = new URL(req.url);
-    const entry = staticFiles[url.pathname];
+    const entry = staticFiles[url.pathname as keyof typeof staticFiles];
 
     if (entry) {
-      return new Response(Bun.file(entry.path), {
+      return new Response(Bun.file(entry.path as string), {
         headers: { "Content-Type": entry.contentType },
       });
     }
