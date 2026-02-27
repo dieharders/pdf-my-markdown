@@ -129,7 +129,7 @@ h1 {
 .drop-zone:hover,
 .drop-zone--active {
   border-color: var(--ui-accent);
-  background: #f0f4ff;
+  background: color-mix(in srgb, var(--ui-accent) 10%, transparent);
 }
 
 .drop-zone__icon { font-size: 2.5rem; margin-bottom: 0.5rem; }

@@ -1,5 +1,5 @@
 const result = await Bun.build({
-  entrypoints: ["./server.ts"],
+  entrypoints: ["./server.ts", "./server-worker.ts"],
   compile: {
     outfile: "./markdown-to-pdf",
   },

@@ -1,16 +1,18 @@
 {
   "name": "pdf-my-markdown",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Convert markdown files to professionally styled PDFs",
   "scripts": {
     "dev": "bun run --watch server.ts",
+    "dev:headless": "bun run --watch server.ts --headless",
     "build": "bun run build.ts",
     "start": "./markdown-to-pdf"
   },
   "dependencies": {
     "markdown-it": "^14.1.0",
     "markdown-it-anchor": "^9.2.0",
-    "markdown-it-footnote": "^4.0.0"
+    "markdown-it-footnote": "^4.0.0",
+    "webview-bun": "^2.4.0"
   },
   "devDependencies": {
     "@types/bun": "^1.3.9",

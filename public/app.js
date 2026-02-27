@@ -195,17 +195,9 @@ convertBtn.addEventListener("click", async () => {
       throw new Error(errData.error || `Server error: ${response.status}`);
     }
 
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-
-    // Revoke previous blob URL
-    if (downloadLink.href.startsWith("blob:")) {
-      URL.revokeObjectURL(downloadLink.href);
-    }
-
-    downloadLink.href = url;
-    const firstMd = files.find((f) => isMdFile(f.name));
-    downloadLink.download = (firstMd ? firstMd.name.replace(/\.md$/i, "") : "document") + ".pdf";
+    const data = await response.json();
+    downloadLink.removeAttribute("href");
+    downloadLink.textContent = `Saved to ${data.path}`;
     result.hidden = false;
   } catch (err) {
     errorMsg.textContent = err.message;
@@ -222,7 +214,5 @@ clearBtn.addEventListener("click", () => {
   files = [];
   renderFileList();
   result.hidden = true;
-  if (downloadLink.href.startsWith("blob:")) {
-    URL.revokeObjectURL(downloadLink.href);
-  }
+  downloadLink.removeAttribute("href");
 });
