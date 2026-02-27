@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown to PDF</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Markdown <span class="accent">to PDF</span></h1>
+    <p class="subtitle">Drop your .md files, get a styled PDF</p>
+
+    <div class="color-row">
+      <label for="colorInput">Theme color</label>
+      <input type="color" id="colorInput" value="#2563eb">
+    </div>
+
+    <div id="dropZone" class="drop-zone">
+      <div class="drop-zone__icon">&#128196;</div>
+      <p class="drop-zone__text">Drag &amp; drop .md files here</p>
+      <p class="drop-zone__hint">or click to browse</p>
+      <input type="file" id="fileInput" accept=".md" multiple hidden>
+    </div>
+
+    <ul id="fileList" class="file-list"></ul>
+
+    <div class="actions">
+      <button id="previewBtn" class="btn btn--secondary" disabled>Preview</button>
+      <button id="convertBtn" class="btn btn--primary" disabled>Convert to PDF</button>
+      <button id="clearBtn" class="btn btn--secondary" hidden>Clear</button>
+    </div>
+
+    <div id="status" class="status" hidden>
+      <div class="spinner"></div>
+      <span>Converting...</span>
+    </div>
+
+    <div id="result" class="result" hidden>
+      <a id="downloadLink" class="btn btn--download" download>Download PDF</a>
+    </div>
+
+    <div id="errorMsg" class="error" hidden></div>
+  </main>
+
+  <div id="previewOverlay" class="preview-overlay" hidden>
+    <div class="preview-overlay__bar">
+      <span>Preview</span>
+      <button id="closePreview" class="preview-overlay__close">&times;</button>
+    </div>
+    <iframe id="previewFrame" class="preview-overlay__frame"></iframe>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

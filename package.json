@@ -1,0 +1,14 @@
+{
+  "name": "markdown-to-pdf",
+  "version": "0.1.0",
+  "description": "Convert markdown files to professionally styled PDFs",
+  "scripts": {
+    "dev": "bun run --watch server.ts",
+    "build": "bun run build.ts",
+    "start": "./markdown-to-pdf"
+  },
+  "dependencies": {
+    "markdown-it": "^14.1.0",
+    "markdown-it-footnote": "^4.0.0"
+  }
+}

@@ -1,0 +1,371 @@
+/* ========================================
+   PDF Content Stylesheet
+   Clean, modern report theme inspired by VS Code's markdown preview.
+   One cohesive font, subtle gradations, understated accents.
+
+   Color variables injected at render time:
+     --color-primary, --color-primary-light, --color-primary-lighter,
+     --color-primary-medium, --color-primary-dark, --color-primary-border
+   ======================================== */
+
+@page {
+  size: Letter;
+  margin: 0.75in 0.75in 1in 0.75in;
+}
+
+/* ---- Base Typography ---- */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12pt;
+  line-height: 1.7;
+  color: #333;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+.document {
+  max-width: 100%;
+  padding: 0;
+}
+
+/* ---- Headings ---- */
+h1, h2, h3, h4, h5, h6 {
+  color: #1a1a1a;
+  margin-top: 1.6em;
+  margin-bottom: 0.5em;
+  line-height: 1.35;
+  page-break-after: avoid;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 24pt;
+  font-weight: 700;
+  padding-bottom: 0.3em;
+  border-bottom: 3px solid var(--color-primary);
+  margin-top: 0;
+  letter-spacing: -0.015em;
+}
+
+h2 {
+  font-size: 18pt;
+  padding-bottom: 0.2em;
+  padding-left: 0.6em;
+  border-bottom: 1px solid var(--color-primary-border);
+  position: relative;
+}
+
+h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.4em;
+  width: 3.5px;
+  background: var(--color-primary);
+  border-radius: 2px;
+}
+
+h3 {
+  font-size: 15pt;
+  color: #2a2a2a;
+}
+
+h4 {
+  font-size: 13pt;
+  color: #444;
+}
+
+h5 {
+  font-size: 12pt;
+  color: #555;
+}
+
+h6 {
+  font-size: 11pt;
+  color: #777;
+}
+
+/* ---- Paragraphs ---- */
+p {
+  margin-bottom: 0.75em;
+  orphans: 3;
+  widows: 3;
+}
+
+/* ---- Links ---- */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a.video-card:hover {
+  text-decoration: none;
+}
+
+/* ---- Horizontal Rules ---- */
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #ccc 20%, #ccc 80%, transparent);
+  margin: 1.8em 0;
+  page-break-after: avoid;
+}
+
+/* ---- Lists ---- */
+ul, ol {
+  margin-bottom: 0.9em;
+  padding-left: 1.6em;
+}
+
+li {
+  margin-bottom: 0.25em;
+}
+
+ul {
+  list-style-type: disc;
+}
+
+ul ul {
+  list-style-type: circle;
+}
+
+ul ul ul {
+  list-style-type: square;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+/* Task lists (checkboxes) */
+ul > li.task-list-item {
+  list-style: none;
+  margin-left: -1.4em;
+}
+
+ul > li.task-list-item input[type="checkbox"] {
+  margin-right: 0.4em;
+}
+
+/* ---- Code ---- */
+code {
+  font-family: 'SF Mono', 'Fira Code', 'Menlo', 'Monaco', 'Consolas', monospace;
+  font-size: 0.88em;
+  background: #f4f4f5;
+  padding: 0.15em 0.35em;
+  border-radius: 3px;
+  color: var(--color-primary-dark);
+}
+
+pre {
+  background: #f8f8f8;
+  color: #383a42;
+  padding: 1em 1.2em;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 9pt;
+  line-height: 1.5;
+  margin-bottom: 1.1em;
+  page-break-inside: avoid;
+  border: 1px solid #e8e8e8;
+  border-left: 3px solid var(--color-primary-border);
+}
+
+pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+}
+
+/* ---- Blockquotes ---- */
+blockquote {
+  border-left: 5px solid var(--color-primary-border);
+  margin: 1em 0;
+  padding: 0.5em 1em;
+  background: var(--color-primary-lighter);
+  color: #555;
+  border-radius: 4px;
+  page-break-inside: avoid;
+}
+
+blockquote p {
+  margin-bottom: 0.35em;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+blockquote blockquote {
+  border-left-color: #d0d0d0;
+  background: #fafafa;
+}
+
+/* ---- Tables ---- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.1em;
+  font-size: 9.5pt;
+  page-break-inside: avoid;
+}
+
+thead {
+  border-bottom: 2px solid var(--color-primary-border);
+}
+
+th {
+  padding: 0.55em 0.75em;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9em;
+}
+
+td {
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid var(--color-primary-light);
+}
+
+tbody tr:nth-child(odd) {
+  background: var(--color-primary-lighter);
+}
+
+tbody tr:nth-child(even) {
+  background: var(--color-primary-light);
+}
+
+/* ---- Images ---- */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.2em auto;
+  border-radius: 4px;
+}
+
+/* ---- Video Link Cards ---- */
+.video-card {
+  display: flex;
+  align-items: center;
+  background: #f4f4f5;
+  color: #333;
+  text-decoration: none;
+  border: 1px solid #e0e0e0;
+  border-left: 3px solid var(--color-primary);
+  border-radius: 4px;
+  padding: 0.8em 1em;
+  margin: 1em 0;
+  gap: 0.8em;
+  page-break-inside: avoid;
+}
+
+.video-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: 50%;
+  font-size: 16px;
+}
+
+.video-card__poster {
+  width: 80px;
+  height: 50px;
+  min-width: 80px;
+  object-fit: cover;
+  border-radius: 3px;
+  margin: 0;
+}
+
+.video-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+}
+
+.video-card__label {
+  font-size: 0.65em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #999;
+  font-weight: 600;
+}
+
+.video-card__title {
+  font-size: 0.95em;
+  font-weight: 600;
+  color: #333;
+}
+
+.video-card__url {
+  font-size: 0.75em;
+  color: #999;
+}
+
+/* ---- Footnotes ---- */
+.footnotes-sep {
+  margin-top: 2.5em;
+}
+
+section.footnotes {
+  font-size: 8.5pt;
+  color: #777;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 0.5em;
+}
+
+section.footnotes ol {
+  padding-left: 1.5em;
+}
+
+section.footnotes li {
+  margin-bottom: 0.25em;
+}
+
+/* ---- Strong & Emphasis ---- */
+strong {
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+em {
+  font-style: italic;
+}
+
+/* ---- Definition Lists ---- */
+dl {
+  margin-bottom: 0.9em;
+}
+
+dt {
+  font-weight: 600;
+  margin-top: 0.5em;
+}
+
+dd {
+  margin-left: 1.5em;
+  margin-bottom: 0.3em;
+  color: #555;
+}
+
+/* ---- Print Rules ---- */
+h1, h2, h3, h4, h5, h6 {
+  page-break-after: avoid;
+}
+
+pre, blockquote, table, .video-card, img {
+  page-break-inside: avoid;
+}
