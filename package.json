@@ -1,6 +1,6 @@
 {
   "name": "pdf-my-markdown",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Convert markdown files to professionally styled PDFs",
   "scripts": {
     "dev": "bun run --watch server.ts",
