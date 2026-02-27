@@ -88,8 +88,8 @@ if (buildAll || targetArg?.startsWith("darwin-") || (!buildAll && !targetArg)) {
 
   if (existsSync(binaryPath)) {
     const appDir = buildAll || targetArg
-      ? "dist/Markdown to PDF.app"
-      : "Markdown to PDF.app";
+      ? "dist/Markdown to PDF-macos.app"
+      : "Markdown to PDF-macos.app";
     const contentsDir = `${appDir}/Contents`;
     const macosDir = `${contentsDir}/MacOS`;
     const resourcesDir = `${contentsDir}/Resources`;
