@@ -12,8 +12,10 @@ const previewBtn = document.getElementById("previewBtn");
 const previewOverlay = document.getElementById("previewOverlay");
 const previewFrame = document.getElementById("previewFrame");
 const closePreview = document.getElementById("closePreview");
+const darkModeToggle = document.getElementById("darkModeToggle");
 
 let files = [];
+let darkMode = false;
 
 const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".bmp", ".ico"];
 
@@ -39,6 +41,7 @@ function buildFormData() {
     formData.append(isMdFile(f.name) ? "files" : "assets", f);
   });
   formData.append("primaryColor", colorInput.value);
+  formData.append("darkMode", String(darkMode));
   return formData;
 }
 
@@ -50,6 +53,13 @@ function updateAccentColor(hex) {
 
 updateAccentColor(colorInput.value);
 colorInput.addEventListener("input", (e) => updateAccentColor(e.target.value));
+
+// ---- Dark Mode Toggle ----
+
+darkModeToggle.addEventListener("click", () => {
+  darkMode = !darkMode;
+  darkModeToggle.setAttribute("aria-checked", String(darkMode));
+});
 
 // ---- Drop Zone Events ----
 

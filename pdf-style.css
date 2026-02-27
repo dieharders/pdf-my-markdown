@@ -13,12 +13,66 @@
   margin: 0.75in 0.75in 1in 0.75in;
 }
 
+/* ---- Dark Mode Variables ---- */
+:root {
+  --pdf-bg: #ffffff;
+  --pdf-text: #333;
+  --pdf-heading: #1a1a1a;
+  --pdf-heading-h3: #2a2a2a;
+  --pdf-heading-h4: #444;
+  --pdf-heading-h5: #555;
+  --pdf-heading-h6: #777;
+  --pdf-muted: #555;
+  --pdf-subtle: #777;
+  --pdf-code-bg: #f4f4f5;
+  --pdf-pre-bg: #f8f8f8;
+  --pdf-pre-text: #383a42;
+  --pdf-pre-border: #e8e8e8;
+  --pdf-blockquote-nested-bg: #fafafa;
+  --pdf-blockquote-nested-border: #d0d0d0;
+  --pdf-hr: #ccc;
+  --pdf-table-th: #333;
+  --pdf-strong: #1a1a1a;
+  --pdf-footnote-border: #e0e0e0;
+  --pdf-card-bg: #f4f4f5;
+  --pdf-card-text: #333;
+  --pdf-card-muted: #999;
+  --pdf-card-border: #e0e0e0;
+}
+
+html.dark {
+  --pdf-bg: #1e1e1e;
+  --pdf-text: #d4d4d4;
+  --pdf-heading: #e0e0e0;
+  --pdf-heading-h3: #ccc;
+  --pdf-heading-h4: #bbb;
+  --pdf-heading-h5: #aaa;
+  --pdf-heading-h6: #999;
+  --pdf-muted: #aaa;
+  --pdf-subtle: #888;
+  --pdf-code-bg: #2d2d2d;
+  --pdf-pre-bg: #252526;
+  --pdf-pre-text: #d4d4d4;
+  --pdf-pre-border: #3c3c3c;
+  --pdf-blockquote-nested-bg: #2a2a2a;
+  --pdf-blockquote-nested-border: #555;
+  --pdf-hr: #555;
+  --pdf-table-th: #e0e0e0;
+  --pdf-strong: #e0e0e0;
+  --pdf-footnote-border: #444;
+  --pdf-card-bg: #252526;
+  --pdf-card-text: #d4d4d4;
+  --pdf-card-muted: #888;
+  --pdf-card-border: #3c3c3c;
+}
+
 /* ---- Base Typography ---- */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   font-size: 12pt;
   line-height: 1.7;
-  color: #333;
+  color: var(--pdf-text);
+  background: var(--pdf-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: 'kern' 1, 'liga' 1;
@@ -31,7 +85,7 @@ body {
 
 /* ---- Headings ---- */
 h1, h2, h3, h4, h5, h6 {
-  color: #1a1a1a;
+  color: var(--pdf-heading);
   margin-top: 1.6em;
   margin-bottom: 0.5em;
   line-height: 1.35;
@@ -69,22 +123,22 @@ h2::before {
 
 h3 {
   font-size: 15pt;
-  color: #2a2a2a;
+  color: var(--pdf-heading-h3);
 }
 
 h4 {
   font-size: 13pt;
-  color: #444;
+  color: var(--pdf-heading-h4);
 }
 
 h5 {
   font-size: 12pt;
-  color: #555;
+  color: var(--pdf-heading-h5);
 }
 
 h6 {
   font-size: 11pt;
-  color: #777;
+  color: var(--pdf-heading-h6);
 }
 
 /* ---- Paragraphs ---- */
@@ -112,7 +166,7 @@ a.video-card:hover {
 hr {
   border: none;
   height: 1px;
-  background: linear-gradient(to right, transparent, #ccc 20%, #ccc 80%, transparent);
+  background: linear-gradient(to right, transparent, var(--pdf-hr) 20%, var(--pdf-hr) 80%, transparent);
   margin: 1.8em 0;
   page-break-after: avoid;
 }
@@ -157,15 +211,15 @@ ul > li.task-list-item input[type="checkbox"] {
 code {
   font-family: 'SF Mono', 'Fira Code', 'Menlo', 'Monaco', 'Consolas', monospace;
   font-size: 0.88em;
-  background: #f4f4f5;
+  background: var(--pdf-code-bg);
   padding: 0.15em 0.35em;
   border-radius: 3px;
   color: var(--color-primary-dark);
 }
 
 pre {
-  background: #f8f8f8;
-  color: #383a42;
+  background: var(--pdf-pre-bg);
+  color: var(--pdf-pre-text);
   padding: 1em 1.2em;
   border-radius: 6px;
   overflow-x: auto;
@@ -173,7 +227,7 @@ pre {
   line-height: 1.5;
   margin-bottom: 1.1em;
   page-break-inside: avoid;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--pdf-pre-border);
   border-left: 3px solid var(--color-primary-border);
 }
 
@@ -191,7 +245,7 @@ blockquote {
   margin: 1em 0;
   padding: 0.5em 1em;
   background: var(--color-primary-lighter);
-  color: #555;
+  color: var(--pdf-muted);
   border-radius: 4px;
   page-break-inside: avoid;
 }
@@ -205,8 +259,8 @@ blockquote p:last-child {
 }
 
 blockquote blockquote {
-  border-left-color: #d0d0d0;
-  background: #fafafa;
+  border-left-color: var(--pdf-blockquote-nested-border);
+  background: var(--pdf-blockquote-nested-bg);
 }
 
 /* ---- Tables ---- */
@@ -226,7 +280,7 @@ th {
   padding: 0.55em 0.75em;
   text-align: left;
   font-weight: 600;
-  color: #333;
+  color: var(--pdf-table-th);
   font-size: 0.9em;
 }
 
@@ -256,10 +310,10 @@ img {
 .video-card {
   display: flex;
   align-items: center;
-  background: #f4f4f5;
-  color: #333;
+  background: var(--pdf-card-bg);
+  color: var(--pdf-card-text);
   text-decoration: none;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--pdf-card-border);
   border-left: 3px solid var(--color-primary);
   border-radius: 4px;
   padding: 0.8em 1em;
@@ -300,19 +354,19 @@ img {
   font-size: 0.65em;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #999;
+  color: var(--pdf-card-muted);
   font-weight: 600;
 }
 
 .video-card__title {
   font-size: 0.95em;
   font-weight: 600;
-  color: #333;
+  color: var(--pdf-card-text);
 }
 
 .video-card__url {
   font-size: 0.75em;
-  color: #999;
+  color: var(--pdf-card-muted);
 }
 
 /* ---- Footnotes ---- */
@@ -322,8 +376,8 @@ img {
 
 section.footnotes {
   font-size: 8.5pt;
-  color: #777;
-  border-top: 1px solid #e0e0e0;
+  color: var(--pdf-subtle);
+  border-top: 1px solid var(--pdf-footnote-border);
   padding-top: 0.5em;
 }
 
@@ -338,7 +392,7 @@ section.footnotes li {
 /* ---- Strong & Emphasis ---- */
 strong {
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--pdf-strong);
 }
 
 em {
@@ -358,7 +412,7 @@ dt {
 dd {
   margin-left: 1.5em;
   margin-bottom: 0.3em;
-  color: #555;
+  color: var(--pdf-muted);
 }
 
 /* ---- Print Rules ---- */

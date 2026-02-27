@@ -111,8 +111,23 @@ function hexToHsl(hex: string): [number, number, number] {
   return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
 }
 
-function generatePalette(hex: string): string {
+function generatePalette(hex: string, darkMode = false): string {
   const [h, s, l] = hexToHsl(hex);
+
+  if (darkMode) {
+    return `:root {
+    --color-primary: ${hex};
+    --color-primary-h: ${h};
+    --color-primary-s: ${s}%;
+    --color-primary-l: ${l}%;
+    --color-primary-light: hsl(${h}, ${Math.max(s - 30, 10)}%, 18%);
+    --color-primary-lighter: hsl(${h}, ${Math.max(s - 35, 10)}%, 15%);
+    --color-primary-medium: hsl(${h}, ${Math.max(s - 10, 20)}%, ${Math.min(l + 10, 60)}%);
+    --color-primary-dark: hsl(${h}, ${Math.min(s + 10, 90)}%, ${Math.min(l + 20, 75)}%);
+    --color-primary-border: hsl(${h}, ${Math.max(s - 20, 15)}%, 35%);
+  }`;
+  }
+
   return `:root {
     --color-primary: ${hex};
     --color-primary-h: ${h};
@@ -163,10 +178,11 @@ function convertVideoTags(html: string): string {
 // Read the PDF stylesheet from embedded file
 const pdfCssContent = await Bun.file(pdfStyleCssPath).text();
 
-function buildHtmlDocument(bodyHtml: string, title = "Document", primaryColor = "#2563eb"): string {
-  const palette = generatePalette(primaryColor);
+function buildHtmlDocument(bodyHtml: string, title = "Document", primaryColor = "#2563eb", darkMode = false): string {
+  const palette = generatePalette(primaryColor, darkMode);
+  const htmlClass = darkMode ? ' class="dark"' : '';
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="en"${htmlClass}>
 <head>
   <meta charset="UTF-8">
   <title>${md.utils.escapeHtml(title)}</title>
@@ -215,6 +231,7 @@ async function buildHtmlFromForm(formData: FormData): Promise<{ html: string; ti
   const files = formData.getAll("files") as File[];
   const assets = formData.getAll("assets") as File[];
   const primaryColor = (formData.get("primaryColor") as string) || "#2563eb";
+  const darkMode = formData.get("darkMode") === "true";
 
   if (!files || files.length === 0) {
     throw Object.assign(new Error("No files uploaded"), { status: 400 });
@@ -250,7 +267,7 @@ async function buildHtmlFromForm(formData: FormData): Promise<{ html: string; ti
   const env: Record<string, unknown> = {};
   const htmlBody = convertVideoTags(md.render(combinedMarkdown, env));
   const title = files[0].name.replace(/\.md$/i, "");
-  let html = buildHtmlDocument(htmlBody, title, primaryColor);
+  let html = buildHtmlDocument(htmlBody, title, primaryColor, darkMode);
 
   if (assetMap.size > 0) {
     html = embedAssets(html, assetMap);
