@@ -260,7 +260,7 @@ blockquote {
   margin: 1em 0;
   padding: 0.5em 1em;
   background: var(--color-primary-lighter);
-  color: var(--pdf-muted);
+  color: var(--color-primary-dark);
   border-radius: 4px;
   page-break-inside: avoid;
 }
