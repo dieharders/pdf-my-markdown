@@ -41,8 +41,6 @@ if (headless) {
     webview.size = { width: 1024, height: 768, hint: 0 };
     webview.navigate(url);
 
-    console.log(`Markdown-to-PDF converter opened (server on port ${port})`);
-
     // Blocks until the window is closed
     webview.run();
 
