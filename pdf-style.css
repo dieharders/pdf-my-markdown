@@ -265,6 +265,10 @@ blockquote {
   page-break-inside: avoid;
 }
 
+blockquote p:first-child {
+  margin-top: 0;
+}
+
 blockquote p {
   margin-bottom: 0.35em;
 }
