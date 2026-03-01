@@ -32,22 +32,38 @@ async function buildTarget(outfile: string, target?: string) {
 /**
  * Patch a Windows PE executable so it runs as a GUI app (no console window).
  * Changes the Subsystem field from CONSOLE (3) to WINDOWS (2).
+ *
+ * This is the same technique used by Microsoft's `editbin /SUBSYSTEM:WINDOWS`
+ * and by Bun's own `--windows-hide-console` internally. We do it manually
+ * because Bun's flag is broken (oven-sh/bun#19916) and doesn't support
+ * cross-compilation anyway.
  */
 async function patchWindowsSubsystem(exePath: string) {
   const file = Bun.file(exePath);
   const buf = Buffer.from(await file.arrayBuffer());
 
+  // DOS header must be at least 0x40 bytes to contain e_lfanew
+  if (buf.length < 0x40) {
+    throw new Error("File too small to be a valid PE executable");
+  }
+
   // e_lfanew: offset to PE signature, stored at DOS header offset 0x3C
   const peOffset = buf.readUInt32LE(0x3c);
+
+  // Subsystem is at optional-header offset 68 (0x44)
+  // Optional header starts after PE sig (4) + COFF header (20)
+  const subsystemOffset = peOffset + 4 + 20 + 68;
+
+  // Ensure the file is large enough to contain the subsystem field
+  if (subsystemOffset + 2 > buf.length) {
+    throw new Error("PE file is truncated — subsystem field out of bounds");
+  }
 
   // Verify PE signature ("PE\0\0")
   if (buf.toString("ascii", peOffset, peOffset + 4) !== "PE\0\0") {
     throw new Error("Not a valid PE file");
   }
 
-  // Subsystem is at optional-header offset 68 (0x44)
-  // Optional header starts after PE sig (4) + COFF header (20)
-  const subsystemOffset = peOffset + 4 + 20 + 68;
   const current = buf.readUInt16LE(subsystemOffset);
 
   if (current === 3) {
@@ -181,13 +197,14 @@ if (buildAll || targetArg?.startsWith("linux-")) {
     if (!existsSync(binaryPath)) continue;
 
     const desktopFile = `dist/markdown-to-pdf-${name}.desktop`;
+    const binaryAbsPath = require("path").resolve(binaryPath);
     writeFileSync(
       desktopFile,
       `[Desktop Entry]
 Type=Application
 Name=Markdown to PDF
 Comment=Convert Markdown files to styled PDFs
-Exec=markdown-to-pdf
+Exec=${binaryAbsPath}
 Icon=markdown-to-pdf
 Terminal=false
 Categories=Office;Utility;
