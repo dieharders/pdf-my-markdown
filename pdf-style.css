@@ -68,14 +68,23 @@ html.dark {
 
 /* ---- Base Typography ---- */
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   font-size: 12pt;
   line-height: 1.7;
   color: var(--pdf-text);
   background: var(--pdf-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: 'kern' 1, 'liga' 1;
+  font-feature-settings:
+    "kern" 1,
+    "liga" 1;
 }
 
 .document {
@@ -84,7 +93,12 @@ body {
 }
 
 /* ---- Headings ---- */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--pdf-heading);
   margin-top: 1.6em;
   margin-bottom: 0.5em;
@@ -164,15 +178,16 @@ a.video-card:hover {
 
 /* ---- Horizontal Rules ---- */
 hr {
-  border: none;
-  height: 1px;
-  background: linear-gradient(to right, transparent, var(--pdf-hr) 20%, var(--pdf-hr) 80%, transparent);
+  border: 0;
+  border-top: 2px dashed var(--color-primary-border);
+  height: 0;
   margin: 1.8em 0;
   page-break-after: avoid;
 }
 
 /* ---- Lists ---- */
-ul, ol {
+ul,
+ol {
   margin-bottom: 0.9em;
   padding-left: 1.6em;
 }
@@ -209,7 +224,7 @@ ul > li.task-list-item input[type="checkbox"] {
 
 /* ---- Code ---- */
 code {
-  font-family: 'SF Mono', 'Fira Code', 'Menlo', 'Monaco', 'Consolas', monospace;
+  font-family: "SF Mono", "Fira Code", "Menlo", "Monaco", "Consolas", monospace;
   font-size: 0.88em;
   background: var(--color-primary-lighter);
   padding: 0.15em 0.35em;
@@ -416,10 +431,19 @@ dd {
 }
 
 /* ---- Print Rules ---- */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   page-break-after: avoid;
 }
 
-pre, blockquote, table, .video-card, img {
+pre,
+blockquote,
+table,
+.video-card,
+img {
   page-break-inside: avoid;
 }
