@@ -179,6 +179,27 @@ if (buildAll || targetArg?.startsWith("darwin-") || (!buildAll && !targetArg)) {
 </plist>`,
     );
 
+    // Ad-hoc code sign so macOS Gatekeeper doesn't block the app
+    const codesign = Bun.spawnSync([
+      "codesign",
+      "--force",
+      "--deep",
+      "-s",
+      "-",
+      appDir,
+    ]);
+    if (codesign.exitCode === 0) {
+      console.log(`  → Ad-hoc signed`);
+    } else {
+      console.warn(
+        `  ⚠ codesign failed (app may be blocked by Gatekeeper):`,
+        codesign.stderr.toString(),
+      );
+    }
+
+    // Remove quarantine attribute if present
+    Bun.spawnSync(["xattr", "-cr", appDir]);
+
     console.log(`\nmacOS app bundle created:`);
     console.log(`  → ${appDir}`);
   }
