@@ -28,7 +28,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -47,21 +47,21 @@ jobs:
           zip -r "markdown-to-pdf-${{ matrix.target }}-app.zip" "Markdown to PDF-macos-${{ matrix.target }}.app"
 
       - name: Upload binary
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.target }}
           path: dist/markdown-to-pdf-${{ matrix.target }}${{ matrix.target == 'windows-x64' && '.exe' || '' }}
 
       - name: Upload macOS .app bundle
         if: startsWith(matrix.target, 'darwin-')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.target }}-app
           path: dist/markdown-to-pdf-${{ matrix.target }}-app.zip
 
       - name: Upload Linux .desktop file
         if: startsWith(matrix.target, 'linux-')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.target }}-desktop
           path: dist/markdown-to-pdf-${{ matrix.target }}.desktop
@@ -71,7 +71,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           path: artifacts
           merge-multiple: true
