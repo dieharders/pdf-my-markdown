@@ -329,6 +329,32 @@ async function handleConvert(req: Request): Promise<Response> {
   }
 }
 
+// ---- Reveal in File Explorer ----
+
+async function handleReveal(req: Request): Promise<Response> {
+  try {
+    const { path: filePath } = await req.json() as { path: string };
+    if (!filePath || !existsSync(filePath)) {
+      return Response.json({ error: "File not found" }, { status: 404 });
+    }
+
+    const platform = process.platform;
+    if (platform === "win32") {
+      Bun.spawn(["explorer", "/select,", filePath], { stdout: "ignore", stderr: "ignore" });
+    } else if (platform === "darwin") {
+      Bun.spawn(["open", "-R", filePath], { stdout: "ignore", stderr: "ignore" });
+    } else {
+      // Linux: open the containing directory
+      const dir = filePath.substring(0, filePath.lastIndexOf("/"));
+      Bun.spawn(["xdg-open", dir || filePath], { stdout: "ignore", stderr: "ignore" });
+    }
+
+    return Response.json({ ok: true });
+  } catch {
+    return Response.json({ error: "Failed to open file explorer" }, { status: 500 });
+  }
+}
+
 // ---- Static File Serving (embedded assets) ----
 
 const MIME_TYPES: Record<string, string> = {
@@ -356,6 +382,9 @@ const server = Bun.serve({
     },
     "/preview": {
       POST: handlePreview,
+    },
+    "/reveal": {
+      POST: handleReveal,
     },
   },
   async fetch(req) {

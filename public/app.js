@@ -198,6 +198,15 @@ convertBtn.addEventListener("click", async () => {
     const data = await response.json();
     downloadLink.removeAttribute("href");
     downloadLink.textContent = `Saved to ${data.path}`;
+    downloadLink.style.cursor = "pointer";
+    downloadLink.onclick = (e) => {
+      e.preventDefault();
+      fetch("/reveal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path: data.path }),
+      });
+    };
     result.hidden = false;
   } catch (err) {
     errorMsg.textContent = err.message;
