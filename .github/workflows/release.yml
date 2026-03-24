@@ -43,8 +43,7 @@ jobs:
         if: startsWith(matrix.target, 'darwin-')
         run: |
           cd dist
-          mv "Markdown to PDF-macos.app" "Markdown to PDF-macos-${{ matrix.target }}.app"
-          zip -r "markdown-to-pdf-${{ matrix.target }}-app.zip" "Markdown to PDF-macos-${{ matrix.target }}.app"
+          zip -r "Markdown.to.PDF-macos-${{ matrix.target }}.zip" "Markdown to PDF-macos.app"
 
       - name: Upload binary
         uses: actions/upload-artifact@v6
@@ -57,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.target }}-app
-          path: dist/markdown-to-pdf-${{ matrix.target }}-app.zip
+          path: dist/Markdown.to.PDF-macos-${{ matrix.target }}.zip
 
       - name: Upload Linux .desktop file
         if: startsWith(matrix.target, 'linux-')
