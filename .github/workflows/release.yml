@@ -46,12 +46,25 @@ jobs:
           mv "Markdown to PDF-macos.app" "markdown-to-pdf-macos-${{ matrix.target == 'darwin-arm64' && 'arm64' || 'x64' }}.app"
           zip -r "markdown-to-pdf-macos-${{ matrix.target == 'darwin-arm64' && 'arm64' || 'x64' }}.zip" "markdown-to-pdf-macos-${{ matrix.target == 'darwin-arm64' && 'arm64' || 'x64' }}.app"
 
+      - name: Zip Windows binary
+        if: matrix.target == 'windows-x64'
+        shell: bash
+        run: |
+          cd dist
+          7z a "markdown-to-pdf-${{ matrix.target }}.zip" "markdown-to-pdf-${{ matrix.target }}.exe"
+
+      - name: Zip Linux binary
+        if: startsWith(matrix.target, 'linux-')
+        run: |
+          cd dist
+          zip "markdown-to-pdf-${{ matrix.target }}.zip" "markdown-to-pdf-${{ matrix.target }}" "markdown-to-pdf-${{ matrix.target }}.desktop"
+
       - name: Upload binary
         if: ${{ !startsWith(matrix.target, 'darwin-') }}
         uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.target }}
-          path: dist/markdown-to-pdf-${{ matrix.target }}${{ matrix.target == 'windows-x64' && '.exe' || '' }}
+          path: dist/markdown-to-pdf-${{ matrix.target }}.zip
 
       - name: Upload macOS .app bundle
         if: startsWith(matrix.target, 'darwin-')
@@ -60,12 +73,7 @@ jobs:
           name: ${{ matrix.target }}-app
           path: dist/markdown-to-pdf-macos-${{ matrix.target == 'darwin-arm64' && 'arm64' || 'x64' }}.zip
 
-      - name: Upload Linux .desktop file
-        if: startsWith(matrix.target, 'linux-')
-        uses: actions/upload-artifact@v6
-        with:
-          name: ${{ matrix.target }}-desktop
-          path: dist/markdown-to-pdf-${{ matrix.target }}.desktop
+
 
   release:
     needs: build
