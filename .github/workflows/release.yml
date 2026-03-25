@@ -2,9 +2,9 @@ name: Release
 
 on:
   workflow_dispatch:
-  # push:
-  #   tags:
-  #     - "v*"
+  push:
+    tags:
+      - "v*"
 
 permissions:
   contents: write
@@ -28,7 +28,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -43,35 +43,43 @@ jobs:
         if: startsWith(matrix.target, 'darwin-')
         run: |
           cd dist
-          mv "Markdown to PDF-macos.app" "Markdown to PDF-macos-${{ matrix.target }}.app"
-          zip -r "markdown-to-pdf-${{ matrix.target }}-app.zip" "Markdown to PDF-macos-${{ matrix.target }}.app"
+          mv "Markdown to PDF-macos.app" "markdown-to-pdf-macos-${{ matrix.target == 'darwin-arm64' && 'arm64' || 'x64' }}.app"
+          zip -r "markdown-to-pdf-macos-${{ matrix.target == 'darwin-arm64' && 'arm64' || 'x64' }}.zip" "markdown-to-pdf-macos-${{ matrix.target == 'darwin-arm64' && 'arm64' || 'x64' }}.app"
+
+      - name: Zip Windows binary
+        if: matrix.target == 'windows-x64'
+        shell: bash
+        run: |
+          cd dist
+          7z a "markdown-to-pdf-${{ matrix.target }}.zip" "markdown-to-pdf-${{ matrix.target }}.exe"
+
+      - name: Zip Linux binary
+        if: startsWith(matrix.target, 'linux-')
+        run: |
+          cd dist
+          zip "markdown-to-pdf-${{ matrix.target }}.zip" "markdown-to-pdf-${{ matrix.target }}" "markdown-to-pdf-${{ matrix.target }}.desktop"
 
       - name: Upload binary
-        uses: actions/upload-artifact@v4
+        if: ${{ !startsWith(matrix.target, 'darwin-') }}
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.target }}
-          path: dist/markdown-to-pdf-${{ matrix.target }}${{ matrix.target == 'windows-x64' && '.exe' || '' }}
+          path: dist/markdown-to-pdf-${{ matrix.target }}.zip
 
       - name: Upload macOS .app bundle
         if: startsWith(matrix.target, 'darwin-')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.target }}-app
-          path: dist/markdown-to-pdf-${{ matrix.target }}-app.zip
+          path: dist/markdown-to-pdf-macos-${{ matrix.target == 'darwin-arm64' && 'arm64' || 'x64' }}.zip
 
-      - name: Upload Linux .desktop file
-        if: startsWith(matrix.target, 'linux-')
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.target }}-desktop
-          path: dist/markdown-to-pdf-${{ matrix.target }}.desktop
+
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           path: artifacts
           merge-multiple: true
@@ -82,6 +90,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.ref_name != github.event.repository.default_branch && github.ref_name || format('v-draft-{0}', github.run_id) }}
+          draft: true
           generate_release_notes: true
           files: |
             artifacts/*
